@@ -1,0 +1,144 @@
+/* src/components/AuthForm.css */
+
+/* Mevcut stilleriniz */
+.auth-container {
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.auth-container h2 {
+  color: #333;
+  margin-bottom: 25px;
+  font-size: 2em;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-group {
+  text-align: left;
+  /* Genel form-group için relative konum kaldırılsın, sadece password-group'a verilecek */
+  /* position: relative; */ /* Bu satırı silebilirsiniz */
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #555;
+}
+
+.form-group input,
+.form-group textarea {
+  width: calc(100% - 20px); /* Padding'i hesaba kat */
+  padding: 12px 10px;
+  /* Tüm input'lara sağdan aynı boşluğu veriyoruz */
+  padding-right: 40px; /* Bu satırı ekleyin veya mevcut padding satırını güncelleyin */
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1em;
+  box-sizing: border-box; /* Padding ve border genişliğe dahil */
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: #61dafb;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(97, 218, 251, 0.2);
+}
+
+/* Şifre grubu için özel stiller (password-group) */
+.password-group {
+  position: relative;
+}
+
+/* password-group içindeki input için özel padding-right artık gerekmiyor
+   çünkü yukarıdaki genel kuralı uyguladık. Bu kuralı kaldırın: */
+/* .password-group input.form-input {
+  padding-right: 40px;
+  width: 100%;
+} */
+
+.password-toggle-button {
+  position: absolute;
+  right: 25px;
+  /* top değerini yine de biraz ayarlamak gerekebilir,
+     çünkü tüm inputlara uygulanan padding-right, inputun yüksekliğini dolaylı olarak etkilemez,
+     ancak içindeki metin konumu değişebilir. */
+  top: 65%; /* Input'un dikey ortasına yakın bir başlangıç noktası */
+  transform: translateY(-50%); /* Kendi yüksekliğinin yarısı kadar yukarı kaydırarak tam dikey ortalama */
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  font-size: 1.2em;
+  color: #555;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.password-toggle-button:hover {
+  color: #333;
+}
+
+
+.auth-button {
+  background-color: #61dafb;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.1em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.auth-button:hover {
+  background-color: #4fa3d1;
+}
+
+.auth-switch-link {
+  margin-top: 20px;
+  font-size: 0.9em;
+  color: #777;
+}
+
+.auth-switch-link a {
+  color: #61dafb;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.auth-switch-link a:hover {
+  text-decoration: underline;
+}
+
+.auth-message {
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.auth-message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.auth-message.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}

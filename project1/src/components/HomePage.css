@@ -1,0 +1,99 @@
+/* src/components/HomePage.css */
+
+.home-page-container {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.home-page-container h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 40px;
+  font-size: 2.5em;
+  font-weight: bold;
+}
+
+.loading-message, .error-message, .no-posts-message {
+  text-align: center;
+  font-size: 1.2em;
+  color: #555;
+  margin-top: 50px;
+}
+
+.error-message {
+  color: #dc3545;
+  font-weight: bold;
+}
+
+.post-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.post-card {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.post-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.post-card-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-bottom: 1px solid #eee;
+}
+
+.post-card-content {
+  padding: 20px;
+  flex-grow: 1; /* İçeriğin kartı doldurmasını sağlar */
+  display: flex;
+  flex-direction: column;
+}
+
+.post-card-title {
+  text-decoration: none;
+  color: #333;
+  font-size: 1.6em;
+  margin-bottom: 10px;
+  transition: color 0.2s ease;
+}
+
+.post-card-title:hover {
+  color: #61dafb;
+}
+
+.post-card-excerpt {
+  font-size: 0.95em;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 15px;
+  flex-grow: 1; /* Özeti de içerikle beraber büyütebiliriz */
+}
+
+.post-card-meta {
+  font-size: 0.85em;
+  color: #888;
+  border-top: 1px solid #eee;
+  padding-top: 15px;
+  margin-top: auto; /* Meta bilgisini alta iter */
+}
+
+.author-name {
+  font-weight: bold;
+  color: #333;
+}
+
+.post-date {
+  font-style: italic;
+}

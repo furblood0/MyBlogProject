@@ -1,0 +1,74 @@
+/* src/App.css */
+.App {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  min-height: 100vh; /* Minimum tam ekran yüksekliği */
+  display: flex;
+  flex-direction: column; /* İçeriği dikey sırala */
+}
+
+.App-header-nav {
+  background-color: #282c34;
+  padding: 20px;
+  color: white;
+  display: flex;
+  justify-content: space-between; /* Başlık ve nav birbirinden uzaklaşsın */
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.App-header-nav h1 {
+  margin: 0;
+  font-size: 1.8em;
+}
+
+.App-header-nav nav a {
+  color: #61dafb;
+  text-decoration: none;
+  margin: 0 10px;
+  font-weight: bold;
+}
+
+.App-header-nav nav a:hover {
+  text-decoration: underline;
+}
+
+.App-main-content {
+  flex-grow: 1; /* Ana içeriğin boş alanı doldurmasını sağlar */
+  padding: 20px;
+  background-color: #f0f2f5;
+}
+
+.App-footer {
+  background-color: #282c34;
+  color: white;
+  padding: 10px;
+  margin-top: auto; /* Footer'ı alta yapıştırır */
+  font-size: 0.8em;
+}
+
+.App-header-nav h1 .app-title-link {
+  color: white;
+  text-decoration: none;
+}
+
+.App-header-nav h1 .app-title-link:hover {
+  color: #61dafb;
+}
+
+.logout-button {
+  background: none;
+  border: none;
+  color: #f8d7da; /* Hafif kırmızımsı bir renk */
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1em;
+  padding: 0;
+  margin: 0 10px;
+  transition: color 0.2s ease-in-out;
+}
+
+.logout-button:hover {
+  color: #dc3545; /* Daha belirgin kırmızı */
+  text-decoration: underline;
+}

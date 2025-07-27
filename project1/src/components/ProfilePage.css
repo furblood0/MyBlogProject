@@ -1,0 +1,172 @@
+/* src/components/ProfilePage.css */
+
+.profile-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.profile-title {
+  text-align: center;
+  color: #333;
+  margin-bottom: 30px;
+  font-size: 2.2em;
+}
+
+.loading-profile-message,
+.error-profile-message,
+.no-profile-found-message {
+  text-align: center;
+  font-size: 1.2em;
+  color: #555;
+  margin-top: 50px;
+}
+
+.error-profile-message {
+  color: #dc3545;
+  font-weight: bold;
+}
+
+.profile-info {
+  background-color: #e0f7fa; /* Hafif mavi arka plan */
+  border: 1px solid #b2ebf2;
+  border-radius: 5px;
+  padding: 20px;
+  margin-bottom: 30px;
+}
+
+.profile-info p {
+  font-size: 1.1em;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.profile-info p strong {
+  color: #00796b; /* Koyu teal rengi */
+}
+
+.my-posts-heading {
+  font-size: 1.8em;
+  color: #333;
+  margin-top: 40px;
+  margin-bottom: 25px;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 10px;
+}
+
+.no-posts-message {
+  text-align: center;
+  font-size: 1.1em;
+  color: #666;
+  padding: 20px;
+  border: 1px dashed #ccc;
+  border-radius: 5px;
+}
+
+.profile-post-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.profile-post-card {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative; /* Butonların konumlandırılması için kritik */
+  padding-right: 50px; /* Butonlara yer açmak için sağdan boşluk */
+}
+
+.profile-post-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.profile-post-card-title {
+  text-decoration: none;
+  color: #333;
+  font-size: 1.3em;
+  margin-bottom: 5px; /* Başlık ile durum arasında boşluk */
+  display: block;
+  transition: color 0.2s ease;
+}
+
+.profile-post-card-title:hover {
+  color: #61dafb;
+}
+
+.profile-post-card-title h4 {
+  margin: 0;
+  font-weight: normal;
+}
+
+.profile-post-status {
+    font-size: 0.9em;
+    color: #007bff; /* Yayınlandı durumu için varsayılan renk */
+    margin-bottom: 5px;
+}
+
+.profile-post-status.draft {
+    color: #ffc107; /* Taslak durumu için sarı */
+    font-weight: bold;
+}
+
+.profile-post-card-date {
+  font-size: 0.9em;
+  color: #888;
+  margin-top: 10px;
+}
+
+/* Aksiyon butonları için kapsayıcı */
+.profile-post-actions {
+  position: absolute; /* Mutlak konumlandırma */
+  top: 10px; /* Kartın üstünden 10px aşağı */
+  right: 10px; /* Kartın sağından 10px içeride */
+  display: flex;
+  flex-direction: column; /* Butonları alt alta sırala */
+  gap: 8px; /* Butonlar arasında boşluk */
+  z-index: 1; /* Diğer içeriğin üstünde olmasını sağla */
+}
+
+.action-button {
+  width: 32px; /* Buton genişliği */
+  height: 32px; /* Buton yüksekliği */
+  padding: 0; /* İç dolgu sıfırla, ikon kendi boyutunu alsın */
+  border: none;
+  border-radius: 50%; /* Yuvarlak butonlar için */
+  cursor: pointer;
+  font-size: 1.1em; /* İkon boyutu */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Hafif gölge */
+}
+
+.action-button:hover {
+  transform: scale(1.1); /* Hover'da hafif büyütme */
+}
+
+.edit-button {
+  background-color: #007bff; /* Mavi */
+  color: white;
+}
+
+.edit-button:hover {
+  background-color: #0056b3;
+}
+
+.delete-button {
+  background-color: #dc3545; /* Kırmızı */
+  color: white;
+}
+
+.delete-button:hover {
+  background-color: #c82333;
+}

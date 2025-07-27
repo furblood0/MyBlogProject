@@ -1,0 +1,26 @@
+# Her iki projenin de node_modules klasörleri
+blog-backend/node_modules/
+project1/node_modules/
+
+# Ortam değişkenleri dosyaları
+blog-backend/.env
+project1/.env
+project1/.env.local
+project1/.env.development.local
+project1/.env.test.local
+project1/.env.production.local
+
+# Frontend'in derlenmiş çıktısı
+project1/build/
+
+# Log dosyaları
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Mac kullanıcıları için
+.DS_Store
+
+# IDE dosyaları (VS Code örnek)
+.vscode/
