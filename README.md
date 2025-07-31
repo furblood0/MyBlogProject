@@ -2,7 +2,7 @@
 
 A modern, full-stack blog application built with React frontend and Node.js backend, featuring user authentication, blog post management, and a responsive design.
 
-![MyBlog Screenshot](https://via.placeholder.com/800x400?text=MyBlog+Screenshot)
+![MyBlog Screenshot](https://imgur.com/a/nTABtE2)
 
 ## 🌟 Features
 
@@ -234,7 +234,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👨‍💻 Author
 
-**Your Name**
+**Furkan Fidan**
 - GitHub: [@furblood0](https://github.com/furblood0)
 
 ## 🙏 Acknowledgments
