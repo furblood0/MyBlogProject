@@ -2,8 +2,6 @@
 
 A modern, full-stack blog application built with React frontend and Node.js backend, featuring user authentication, blog post management, and a responsive design.
 
-![MyBlog Screenshot](https://hizliresim.com/s7bjmfg)
-
 ## 🌟 Features
 
 - **User Authentication**: Secure registration and login with JWT tokens
