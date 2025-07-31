@@ -2,7 +2,7 @@
 
 A modern, full-stack blog application built with React frontend and Node.js backend, featuring user authentication, blog post management, and a responsive design.
 
-![MyBlog Screenshot](https://imgur.com/a/nTABtE2)
+![MyBlog Screenshot](https://hizliresim.com/s7bjmfg)
 
 ## 🌟 Features
 
