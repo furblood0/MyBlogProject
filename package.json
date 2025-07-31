@@ -1,1 +1,35 @@
-{}
+{
+  "name": "my-blog-project",
+  "version": "1.0.0",
+  "description": "Full-stack blog application with React frontend and Node.js backend",
+  "main": "index.js",
+  "scripts": {
+    "install-all": "npm install && cd project1 && npm install && cd ../blog-backend && npm install",
+    "start-backend": "cd blog-backend && npm start",
+    "start-frontend": "cd project1 && npm start",
+    "dev": "concurrently \"npm run start-backend\" \"npm run start-frontend\"",
+    "build": "cd project1 && npm run build",
+    "test": "cd project1 && npm test"
+  },
+  "keywords": [
+    "blog",
+    "react",
+    "nodejs",
+    "express",
+    "sql-server",
+    "fullstack"
+  ],
+  "author": "Furkan Fidan",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/furblood0/my-blog-project.git"
+  },
+  "bugs": {
+    "url": "https://github.com/furblood0/my-blog-project/issues"
+  },
+  "homepage": "https://github.com/furblood0/my-blog-project#readme"
+}
