@@ -240,6 +240,20 @@ The backend can be deployed to:
 - AWS EC2
 - Azure App Service
 
+## 🖼️ Screenshots
+
+### Dashboard (Feed)
+
+![Dashboard](project1/public/dashboard.png)
+
+### Post Detail
+
+![Post Detail](project1/public/blog_detail.png)
+
+### Profile & Dashboard
+
+![Profile](project1/public/profile.png)
+
 ## 🤝 Contributing
 
 1. Fork the repository
