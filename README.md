@@ -250,7 +250,7 @@ The backend can be deployed to:
 
 ![Post Detail](project1/public/blog_detail.png)
 
-### Profile & Dashboard
+### Profile
 
 ![Profile](project1/public/profile.png)
 
