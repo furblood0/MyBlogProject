@@ -5,16 +5,14 @@ import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './AuthForm.css';
 import { toast } from 'react-toastify';
-
-// Font Awesome ikonlarını içeri aktar
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'; // Açık ve kapalı göz ikonları
+import { Button } from './ui/Button';
+import { Input } from './ui/Input';
+import { colors, spacing } from '../theme';
 
 function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false); // Şifreyi göster/gizle state'i
 
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -44,54 +42,85 @@ function LoginPage() {
     }
   };
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
   return (
-    <div className="auth-container">
-      <h2>Giriş Yap</h2>
-      <form className="auth-form" onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="email">E-posta:</label>
-          <input
-            type="email"
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+      }}
+    >
+      <div
+        style={{
+          width: '100%',
+          maxWidth: 420,
+          padding: spacing.xl,
+          borderRadius: 16,
+          border: `1px solid ${colors.borderSubtle}`,
+          background:
+            'radial-gradient(circle at top, rgba(37,99,235,0.15), transparent 55%), #020617',
+          boxShadow: '0 22px 55px rgba(15,23,42,0.9)',
+        }}
+      >
+        <h2
+          style={{
+            margin: 0,
+            marginBottom: spacing.sm,
+            fontSize: '1.4rem',
+          }}
+        >
+          Tekrar hoş geldin
+        </h2>
+        <p
+          style={{
+            margin: 0,
+            marginBottom: spacing.xl,
+            fontSize: '0.9rem',
+            color: colors.textMuted,
+          }}
+        >
+          Hesabına giriş yap ve yazılarını yönetmeye devam et.
+        </p>
+
+        <form onSubmit={handleSubmit}>
+          <Input
             id="email"
-            name="email"
+            type="email"
+            label="E-posta"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="form-input"
           />
-        </div>
-        <div className="form-group password-group">
-          <label htmlFor="password">Şifre:</label>
-          <input
-            type={showPassword ? 'text' : 'password'}
+
+          <Input
             id="password"
-            name="password"
+            type="password"
+            label="Şifre"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="form-input"
           />
-          <button
-            type="button"
-            className="password-toggle-button"
-            onClick={togglePasswordVisibility}
-            aria-label={showPassword ? 'Şifreyi gizle' : 'Şifreyi göster'}
+
+          <Button type="submit" fullWidth disabled={loading}>
+            {loading ? 'Giriş yapılıyor...' : 'Giriş Yap'}
+          </Button>
+        </form>
+
+        <p
+          style={{
+            marginTop: spacing.lg,
+            fontSize: '0.85rem',
+            color: colors.textMuted,
+          }}
+        >
+          Hesabın yok mu?{' '}
+          <Link
+            to="/register"
+            style={{ color: colors.primary, textDecoration: 'none' }}
           >
-            {/* Font Awesome ikonu kullanıldı */}
-            <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} />
-          </button>
-        </div>
-        <button type="submit" className="auth-button" disabled={loading}>
-          {loading ? 'Giriş Yapılıyor...' : 'Giriş Yap'}
-        </button>
-      </form>
-      <p className="auth-switch-link">
-        Hesabın yok mu? <Link to="/register">Kayıt Ol</Link>
-      </p>
+            Kayıt ol
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }

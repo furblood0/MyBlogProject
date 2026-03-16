@@ -1,0 +1,19 @@
+
+services:
+  db:
+    image: postgres:16
+    container_name: myblog-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: blogdb
+      POSTGRES_USER: mybloguser
+      POSTGRES_PASSWORD: supersecret
+    ports:
+      - "5432:5432"
+    volumes:
+      - myblog_pgdata:/var/lib/postgresql/data
+      - ./db-init:/docker-entrypoint-initdb.d
+
+volumes:
+  myblog_pgdata:
+

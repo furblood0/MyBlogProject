@@ -3,13 +3,19 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { Card } from './ui/Card';
+import { spacing } from '../theme';
 
 function ProtectedRoute({ children }) {
   const { currentUser, loading } = useAuth();
 
   // AuthContext henüz yükleniyorsa, bir yüklenme göstergesi döndür
   if (loading) {
-    return <div>Yükleniyor...</div>; // Veya bir spinner component'i
+    return (
+      <div style={{ paddingTop: spacing.xl }}>
+        <Card>Yükleniyor...</Card>
+      </div>
+    );
   }
 
   // Kullanıcı giriş yapmamışsa Login sayfasına yönlendir

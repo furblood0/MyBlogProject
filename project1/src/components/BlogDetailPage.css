@@ -1,71 +1,75 @@
 /* src/components/BlogDetailPage.css */
 
-.blog-detail-container {
-  max-width: 900px;
-  margin: 40px auto;
-  padding: 30px;
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-}
-
-.loading-detail-message,
-.error-detail-message,
-.no-post-found-message {
+.blog-detail-status {
   text-align: center;
-  font-size: 1.3em;
-  color: #555;
+  font-size: 0.95rem;
+  color: #9ca3af;
   margin-top: 80px;
 }
 
-.error-detail-message {
-  color: #dc3545;
-  font-weight: bold;
+.blog-detail-status-error {
+  color: #fecaca;
+}
+
+.blog-detail-container {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 32px 24px 40px;
+  background: radial-gradient(circle at top, rgba(59, 130, 246, 0.12), transparent 55%),
+    #020617;
+  border-radius: 16px;
+  border: 1px solid #1f2937;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.9);
+}
+
+.blog-detail-hero {
+  margin: -8px -8px 24px;
+  border-radius: 12px;
+  overflow: hidden;
 }
 
 .blog-detail-image {
   width: 100%;
-  max-height: 400px;
+  max-height: 420px;
   object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 30px;
+  display: block;
+}
+
+.blog-detail-header {
+  margin-bottom: 24px;
 }
 
 .blog-detail-title {
-  font-size: 2.8em;
-  color: #333;
-  margin-bottom: 20px;
-  text-align: center;
-  line-height: 1.2;
+  font-size: 1.9rem;
+  margin: 0 0 8px;
 }
 
 .blog-detail-meta {
-  text-align: center;
-  font-size: 1em;
-  color: #777;
-  margin-bottom: 30px;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 15px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  font-size: 0.8rem;
+  color: #9ca3af;
 }
 
 .author-name-detail {
-  font-weight: bold;
-  color: #555;
+  font-weight: 500;
 }
 
 .post-date-detail {
-  font-style: italic;
+  font-size: 0.8rem;
 }
 
 .blog-detail-content {
-  font-size: 1.1em;
+  font-size: 0.95rem;
   line-height: 1.8;
-  color: #444;
-  margin-bottom: 30px;
-  word-wrap: break-word; /* Uzun kelimeleri kırmak için */
+  color: #e5e7eb;
+  margin-bottom: 24px;
+  word-wrap: break-word;
+  white-space: pre-wrap;
 }
 
-/* İçerik içindeki HTML etiketleri için temel stiller */
 .blog-detail-content p {
   margin-bottom: 1em;
 }
@@ -75,7 +79,6 @@
 .blog-detail-content h3 {
   margin-top: 1.5em;
   margin-bottom: 0.8em;
-  color: #333;
 }
 
 .blog-detail-content img {
@@ -84,11 +87,11 @@
   display: block;
   margin: 20px auto;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.9);
 }
 
 .blog-detail-content a {
-  color: #61dafb;
+  color: #60a5fa;
   text-decoration: none;
 }
 
@@ -97,10 +100,10 @@
 }
 
 .blog-detail-updated {
-  font-size: 0.9em;
-  color: #999;
+  font-size: 0.8rem;
+  color: #6b7280;
   text-align: right;
-  margin-top: 20px;
-  border-top: 1px solid #eee;
-  padding-top: 15px;
+  margin-top: 16px;
+  border-top: 1px solid #1f2937;
+  padding-top: 12px;
 }

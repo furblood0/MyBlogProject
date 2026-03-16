@@ -5,13 +5,24 @@ A modern, full-stack blog application built with React frontend and Node.js back
 ## 🌟 Features
 
 - **User Authentication**: Secure registration and login with JWT tokens
-- **Blog Post Management**: Create, edit, delete, and publish blog posts
-- **Draft System**: Save posts as drafts or publish them publicly
+- **Post Management**: Create, edit, delete, and publish blog posts
+- **Draft & Status System**: Draft / published status, publish date, estimated reading time
+- **Rich Authoring Experience**:
+  - Dark, distraction-free editor
+  - Live preview mode
+  - Line breaks and formatting preserved on the detail page
+- **Cover Images**:
+  - Upload images from your computer (stored on the backend)
+  - Or use any external image URL
+- **Modern Feed Layout**:
+  - Square cards with optional cover image, title, teaser, author and date
+  - First card is a “New Post” shortcut matching the grid layout
+- **Profile Dashboard**:
+  - Avatar, display name, bio
+  - Post stats (total, published, drafts)
+  - Filterable list: All / Published / Draft
 - **Responsive Design**: Works seamlessly on desktop, tablet, and mobile
-- **Modern UI**: Clean and intuitive user interface
-- **Real-time Updates**: Dynamic content updates without page refresh
-- **Search Functionality**: Find posts quickly with search capabilities
-- **User Profiles**: Personal dashboard for managing your content
+- **Dark UI**: Consistent dark theme across app, optimized for reading and writing
 
 ## 🛠️ Tech Stack
 
@@ -30,10 +41,11 @@ A modern, full-stack blog application built with React frontend and Node.js back
 - **Bcrypt.js** - Password hashing
 - **CORS** - Cross-origin resource sharing
 - **Dotenv** - Environment variable management
+- **Multer** - File upload handling for cover images
 
 ### Database
-- **Microsoft SQL Server** - Relational database
-- **MSSQL** - Node.js driver for SQL Server
+- **PostgreSQL (Docker)** - Relational database
+- **pg** - Node.js driver for PostgreSQL
 
 ## 📋 Prerequisites
 
@@ -41,7 +53,7 @@ Before running this application, make sure you have the following installed:
 
 - **Node.js** (v16 or higher)
 - **npm** or **yarn**
-- **Microsoft SQL Server** (Local or Azure)
+- **Docker Desktop** (for running PostgreSQL)
 - **Git**
 
 ## 🚀 Quick Start
@@ -60,14 +72,19 @@ cd my-blog-project
 npm run install-all
 ```
 
-### 3. Database Setup
+### 3. Database Setup (Docker + PostgreSQL)
 
-1. **Create Database**: Create a new database named `BlogDB` in your SQL Server instance
-2. **Run Schema**: Execute the `database-schema.sql` file in your SQL Server Management Studio or Azure Data Studio
+1. **Docker ile PostgreSQL ve şema kurulumunu başlat**:
 
-```sql
--- Run the contents of database-schema.sql in your SQL Server
+```bash
+docker-compose down -v  # (İlk kurulumda veya sıfırlamak istediğinde)
+docker-compose up -d
 ```
+
+- `docker-compose.yml` içindeki `db` servisi (PostgreSQL) ayağa kalkar.
+- `db-init/database-schema-postgres.sql` dosyası, PostgreSQL ilk kez başlarken otomatik çalıştırılır ve tablolar oluşturulur.
+
+> Not: Veritabanı şeması; kullanıcı meta alanlarını (`display_name`, `avatar_url`, `bio`, `role`) ve yazı alanlarını (`slug`, `status`, `published_at`, `reading_time`) içerir.
 
 ### 4. Environment Configuration
 
@@ -80,8 +97,9 @@ cp env.example .env
 Edit `blog-backend/.env`:
 ```env
 PORT=5000
-DB_SERVER=localhost
-DB_DATABASE=BlogDB
+DB_HOST=localhost
+DB_PORT=5432
+DB_DATABASE=blogdb
 DB_USER=your_username
 DB_PASSWORD=your_password
 JWT_SECRET=your_super_secret_jwt_key_here_make_it_long_and_random
@@ -121,6 +139,7 @@ npm run start-frontend
 The application will be available at:
 - **Frontend**: http://localhost:3000
 - **Backend API**: http://localhost:5000
+- **Uploaded Images**: http://localhost:5000/uploads/...
 
 ## 📁 Project Structure
 
@@ -131,7 +150,8 @@ my-blog-project/
 │   │   └── db.js          # Database configuration
 │   ├── middleware/
 │   │   └── auth.js        # JWT authentication middleware
-│   ├── server.js          # Main server file
+│   ├── uploads/           # Uploaded cover images (served at /uploads)
+│   ├── server.js          # Main server file (REST API + file upload endpoint)
 │   ├── package.json
 │   └── env.example        # Environment variables template
 ├── project1/              # Frontend React app
@@ -143,7 +163,9 @@ my-blog-project/
 │   │   └── App.js         # Main app component
 │   ├── package.json
 │   └── env.example        # Environment variables template
-├── database-schema.sql    # Database schema
+├── db-init/               # PostgreSQL init scripts (used by Docker)
+│   └── database-schema-postgres.sql
+├── database-schema.sql    # Legacy SQL Server schema
 ├── package.json           # Root package.json
 ├── .gitignore
 └── README.md

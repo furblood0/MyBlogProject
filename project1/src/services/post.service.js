@@ -99,6 +99,29 @@ class PostService {
             throw error.response?.data?.message || error.message || 'Yazı silme başarısız oldu.';
         }
     }
+
+    // Yeni: Görsel yükleme (dosya)
+    async uploadImage(file) {
+        const user = authService.getCurrentUser();
+        if (!user || !user.token) {
+            throw new Error('Giriş yapmalısınız.');
+        }
+
+        const formData = new FormData();
+        formData.append('image', file);
+
+        try {
+            const response = await axios.post(API_URL + 'uploads/image', formData, {
+                headers: {
+                    'x-auth-token': user.token,
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            return response.data; // { url }
+        } catch (error) {
+            throw error.response?.data?.message || error.message || 'Görsel yüklenemedi.';
+        }
+    }
 }
 
 const postServiceInstance = new PostService();

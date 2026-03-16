@@ -4,6 +4,9 @@ import { useAuth } from '../context/AuthContext';
 import postService from '../services/post.service';
 import './CreatePostPage.css';
 import { toast } from 'react-toastify';
+import { Card } from './ui/Card';
+import { colors, spacing } from '../theme';
+import { PostEditor } from './posts/PostEditor';
 
 function CreatePostPage() {
     const { currentUser, loading: authLoading } = useAuth(); // AuthContext'ten loading'i de al
@@ -45,7 +48,7 @@ function CreatePostPage() {
                     // `server.js`'deki `/api/posts/:id` rotasında `p.user_id`'yi çektiğimizden emin olun.
                     if (postData.user_id !== currentUser.id) { // Backend'den gelen `user_id` ile karşılaştır
                         toast.error('Bu yazıyı düzenleme yetkiniz yok.');
-                        navigate('/profile'); // Yetkisizse profil sayfasına yönlendir
+                    navigate('/profile'); // Yetkisizse profil sayfasına yönlendir
                         return;
                     }
 
@@ -53,7 +56,10 @@ function CreatePostPage() {
                     setContent(postData.content);
                     setExcerpt(postData.excerpt || ''); // Null ise boş string yap
                     setImageUrl(postData.image_url || ''); // Null ise boş string yap
-                    setPublished(postData.published);
+                    const isPublished =
+                        postData.status === 'published' ||
+                        postData.published === true;
+                    setPublished(isPublished);
                 })
                 .catch(err => {
                     console.error("Yazı yüklenirken hata:", err);
@@ -71,12 +77,14 @@ function CreatePostPage() {
         }
     }, [postId, currentUser, authLoading, navigate]); // Dependencylere authLoading'i de ekle
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleSubmit = async (payload) => {
         setIsSubmitting(true); // Form gönderilirken loading göster
         setError(null);
 
-        if (!title || !content) {
+        const { title: pTitle, content: pContent, excerpt: pExcerpt, imageUrl: pImageUrl, published: pPublished } =
+            payload;
+
+        if (!pTitle || !pContent) {
             toast.error('Başlık ve içerik alanları zorunludur.');
             setIsSubmitting(false);
             return;
@@ -85,11 +93,24 @@ function CreatePostPage() {
         try {
             if (isEditing) {
                 // Mevcut yazıyı güncelle
-                await postService.updatePost(postId, title, content, excerpt, imageUrl, published);
+                await postService.updatePost(
+                    postId,
+                    pTitle,
+                    pContent,
+                    pExcerpt,
+                    pImageUrl,
+                    pPublished
+                );
                 toast.success('Yazı başarıyla güncellendi!');
             } else {
                 // Yeni yazı oluştur
-                await postService.createPost(title, content, excerpt, imageUrl, published);
+                await postService.createPost(
+                    pTitle,
+                    pContent,
+                    pExcerpt,
+                    pImageUrl,
+                    pPublished
+                );
                 toast.success('Yazı başarıyla oluşturuldu!');
             }
             navigate('/profile'); // Başarılı işlem sonrası profil sayfasına yönlendir
@@ -105,76 +126,67 @@ function CreatePostPage() {
 
     // Eğer AuthProvider hala yükleniyorsa veya kullanıcı giriş yapmadıysa formu gösterme
     if (authLoading || (!currentUser && !authLoading)) {
-        return <div>Yükleniyor...</div>;
+        return (
+            <div style={{ paddingTop: spacing.xl }}>
+                <Card>
+                    <div>Yükleniyor...</div>
+                </Card>
+            </div>
+        );
     }
 
     // Yazı yüklenirken veya gönderilirken bir şeyler göster
     if (isSubmitting && isEditing) { // Sadece düzenleme modunda ve yazı yüklenirken
-        return <div className="create-post-container">Yazı bilgileri yükleniyor...</div>;
+        return (
+            <div style={{ paddingTop: spacing.xl }}>
+                <Card>
+                    <div>Yazı bilgileri yükleniyor...</div>
+                </Card>
+            </div>
+        );
     }
 
 
     return (
-        <div className="create-post-container">
-            <h2>{isEditing ? 'Yazıyı Düzenle' : 'Yeni Yazı Oluştur'}</h2>
-            {error && <p className="error-message">{error}</p>}
-            <form className="create-post-form" onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label htmlFor="title">Başlık:</label>
-                    <input
-                        type="text"
-                        id="title"
-                        name="title"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        required
-                    />
+        <div style={{ paddingTop: spacing.xl }}>
+            <Card>
+                <div
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'baseline',
+                        marginBottom: spacing.lg,
+                    }}
+                >
+                    <div>
+                        <h2 style={{ margin: 0 }}>
+                            {isEditing ? 'Yazıyı düzenle' : 'Yeni yazı oluştur'}
+                        </h2>
+                        <p
+                            style={{
+                                margin: 0,
+                                marginTop: spacing.xs,
+                                fontSize: '0.9rem',
+                                color: colors.textMuted,
+                            }}
+                        >
+                            Başlık, kısa özet ve içeriği doldur; istersen taslak
+                            olarak kaydet.
+                        </p>
+                    </div>
                 </div>
-                <div className="form-group">
-                    <label htmlFor="excerpt">Özet (Opsiyonel):</label>
-                    <input
-                        type="text"
-                        id="excerpt"
-                        name="excerpt"
-                        value={excerpt}
-                        onChange={(e) => setExcerpt(e.target.value)}
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="imageUrl">Resim URL'si (Opsiyonel):</label>
-                    <input
-                        type="text"
-                        id="imageUrl"
-                        name="imageUrl"
-                        value={imageUrl}
-                        onChange={(e) => setImageUrl(e.target.value)}
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="content">İçerik:</label>
-                    <textarea
-                        id="content"
-                        name="content"
-                        value={content}
-                        onChange={(e) => setContent(e.target.value)}
-                        rows="10"
-                        required
-                    ></textarea>
-                </div>
-                <div className="form-group checkbox-group">
-                    <input
-                        type="checkbox"
-                        id="published"
-                        name="published"
-                        checked={published}
-                        onChange={(e) => setPublished(e.target.checked)}
-                    />
-                    <label htmlFor="published">Yayımla</label>
-                </div>
-                <button type="submit" className="create-post-button" disabled={isSubmitting}>
-                    {isSubmitting ? 'İşleniyor...' : (isEditing ? 'Yazıyı Güncelle' : 'Yazıyı Kaydet')}
-                </button>
-            </form>
+
+                <PostEditor
+                    initialTitle={title}
+                    initialExcerpt={excerpt}
+                    initialImageUrl={imageUrl}
+                    initialContent={content}
+                    initialPublished={published}
+                    onSubmit={handleSubmit}
+                    submitting={isSubmitting}
+                    error={error}
+                />
+            </Card>
         </div>
     );
 }

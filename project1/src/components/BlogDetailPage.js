@@ -27,39 +27,60 @@ function BlogDetailPage() {
     fetchPost();
   }, [id]); // id değiştiğinde tekrar çalıştır
 
+  const resolveImageUrl = (url) => {
+    if (!url) return null;
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    if (url.startsWith('/uploads')) {
+      return `http://localhost:5000${url}`;
+    }
+    return url;
+  };
+
   if (loading) {
-    return <div className="loading-detail-message">Yazı yükleniyor...</div>;
+    return <div className="blog-detail-status">Yazı yükleniyor...</div>;
   }
 
   if (error) {
-    return <div className="error-detail-message">Hata: {error}</div>;
+    return <div className="blog-detail-status blog-detail-status-error">Hata: {error}</div>;
   }
 
   if (!post) {
-    return <div className="no-post-found-message">Yazı bulunamadı.</div>;
+    return <div className="blog-detail-status">Yazı bulunamadı.</div>;
   }
 
   return (
-    <div className="blog-detail-container">
+    <article className="blog-detail-container">
       {post.image_url && (
-        <img src={post.image_url} alt={post.title} className="blog-detail-image" />
+        <div className="blog-detail-hero">
+          <img
+            src={resolveImageUrl(post.image_url)}
+            alt={post.title}
+            className="blog-detail-image"
+          />
+        </div>
       )}
-      <h2 className="blog-detail-title">{post.title}</h2>
-      <p className="blog-detail-meta">
-        Yazar: <span className="author-name-detail">{post.authorUsername}</span> |{' '}
-        <span className="post-date-detail">
-          {new Date(post.created_at).toLocaleDateString()}
-        </span>
-      </p>
-      <div className="blog-detail-content" dangerouslySetInnerHTML={{ __html: post.content }}>
-        {/* HTML içeriğini güvenli bir şekilde render etmek için dangerouslySetInnerHTML kullanıldı */}
-      </div>
-      {post.updated_at && (
-        <p className="blog-detail-updated">
-          Son Güncelleme: {new Date(post.updated_at).toLocaleDateString()}
+      <header className="blog-detail-header">
+        <h1 className="blog-detail-title">{post.title}</h1>
+        <p className="blog-detail-meta">
+          <span className="author-name-detail">
+            {post.authorUsername || 'Bilinmeyen yazar'}
+          </span>
+          <span className="post-date-detail">
+            {new Date(post.published_at || post.created_at).toLocaleDateString()}
+          </span>
         </p>
+      </header>
+      <section className="blog-detail-content">
+        {post.content}
+      </section>
+      {post.updated_at && (
+        <footer className="blog-detail-updated">
+          Son Güncelleme: {new Date(post.updated_at).toLocaleDateString()}
+        </footer>
       )}
-    </div>
+    </article>
   );
 }
 

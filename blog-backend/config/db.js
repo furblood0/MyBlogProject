@@ -1,47 +1,35 @@
 // blog-backend/config/db.js
 
-const sql = require('mssql'); // mssql kütüphanesini içeri aktar
+const { Pool } = require('pg');
 
 // .env dosyasından veritabanı yapılandırma bilgilerini çek
-const config = {
+// İstersen aşağıdaki env'leri kullanabilirsin:
+// DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_DATABASE
+const pool = new Pool({
+  host: process.env.DB_HOST || process.env.DB_SERVER || 'localhost',
+  port: Number(process.env.DB_PORT) || 5432,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
-  server: process.env.DB_SERVER, // 'localhost' veya 'your_server_name'
   database: process.env.DB_DATABASE,
-  options: {
-    encrypt: true, // Azure SQL Database için true yapın, yerel SQL Server için gerekliyse (örneğin TLS/SSL kullanıyorsanız)
-    trustServerCertificate: true // Kendi kendine imzalı sertifika kullanıyorsanız true yapın (yerel geliştirme için yaygın)
-  }
-};
+});
 
-let pool; // Veritabanı bağlantı havuzunu tutacak değişken
-
-// Veritabanı bağlantısını başlatma fonksiyonu
 async function connectDB() {
   try {
-    if (pool && pool.connected) {
-      console.log('Veritabanı zaten bağlı.');
-      return pool; // Zaten bağlıysa mevcut havuzu döndür
-    }
-    pool = await sql.connect(config); // Yeni bir bağlantı havuzu oluştur
-    console.log('MS SQL Server\'a başarıyla bağlanıldı!');
-    return pool;
+    // Basit bir test bağlantısı yapalım
+    await pool.query('SELECT 1');
+    console.log('PostgreSQL\'e başarıyla bağlanıldı!');
   } catch (err) {
-    console.error('MS SQL Server bağlantı hatası:', err);
-    process.exit(1); // Bağlantı hatasında uygulamadan çık
+    console.error('PostgreSQL bağlantı hatası:', err);
+    process.exit(1);
   }
 }
 
-// Veritabanı bağlantı havuzunu dışa aktar
-const getConnection = () => {
-  if (!pool || !pool.connected) {
-    throw new Error('Veritabanı havuzu bağlı değil. Önce connectDB() çağırılmalı.');
-  }
-  return pool;
-};
+const getPool = () => pool;
+
+const query = (text, params) => pool.query(text, params);
 
 module.exports = {
   connectDB,
-  getConnection,
-  sql // mssql nesnesini de dışa aktar, böylece diğer dosyalarda Request, Input vb. kullanılabilir
+  getPool,
+  query,
 };

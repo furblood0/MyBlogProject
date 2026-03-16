@@ -10,6 +10,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 
 import './ProfilePage.css'; // Stil dosyanız
+import { Card } from './ui/Card';
+import { Button } from './ui/Button';
+import { colors, spacing } from '../theme';
 
 function ProfilePage() {
     // `id` useParams'tan geliyordu, ancak biz artık currentUser.id kullanacağız
@@ -17,7 +20,9 @@ function ProfilePage() {
     // const { id } = useParams(); // <-- BU SATIRI YORUM SATIRI YAP VEYA SİL
     const { currentUser, loading: authLoading, logout } = useAuth(); // logout'u da ekledik
     const [profileUser, setProfileUser] = useState(null);
+    const [stats, setStats] = useState({ totalPosts: 0, publishedPosts: 0, draftPosts: 0 });
     const [userPosts, setUserPosts] = useState([]);
+    const [filter, setFilter] = useState('all'); // all | published | draft
     const [loading, setLoading] = useState(true); // Veri çekme yüklemesi
     const [error, setError] = useState(null);
     const navigate = useNavigate();
@@ -50,7 +55,12 @@ function ProfilePage() {
                 // çünkü o kendi içinde currentUser.id'yi kullanıyor.
                 const data = await authService.getUserProfileAndPosts(); // <-- ID PARAMETRESİNİ KALDIRDIK
                 setProfileUser(data.user);
-                setUserPosts(data.posts);
+                setStats({
+                    totalPosts: Number(data.stats?.totalPosts || 0),
+                    publishedPosts: Number(data.stats?.publishedPosts || 0),
+                    draftPosts: Number(data.stats?.draftPosts || 0),
+                });
+                setUserPosts(data.posts || []);
             } catch (err) {
                 console.error('Profil bilgisi getirme hatası:', err);
                 // Hata durumunda 401/403 ise kullanıcıyı logout et
@@ -98,69 +108,452 @@ function ProfilePage() {
     };
 
     if (loading || authLoading) {
-        return <div className="loading-profile-message">Profil bilgileri yükleniyor...</div>;
+        return (
+            <div style={{ paddingTop: spacing.xl }}>
+                <Card>
+                    <div>Profil bilgileri yükleniyor...</div>
+                </Card>
+            </div>
+        );
     }
 
     if (error) {
-        return <div className="error-profile-message">Hata: {error}</div>;
+        return (
+            <div style={{ paddingTop: spacing.xl }}>
+                <Card
+                    style={{
+                        borderColor: colors.danger,
+                        background: colors.dangerSoft,
+                    }}
+                >
+                    <div>Hata: {error}</div>
+                </Card>
+            </div>
+        );
     }
 
     // currentUser'ın varlığını zaten useEffect başında kontrol ettik.
     // profileUser'ın null olması durumunu da burada ele alabiliriz.
     if (!profileUser) {
-        return <div className="no-profile-found-message">Profil bulunamadı veya yüklenemedi.</div>;
+        return (
+            <div style={{ paddingTop: spacing.xl }}>
+                <Card>
+                    <div>Profil bulunamadı veya yüklenemedi.</div>
+                </Card>
+            </div>
+        );
     }
 
+    const filteredPosts = userPosts.filter((post) => {
+        if (filter === 'published') {
+            return post.status === 'published';
+        }
+        if (filter === 'draft') {
+            return post.status === 'draft';
+        }
+        return true;
+    });
+
+    const displayName = profileUser.display_name || profileUser.username;
+    const initials = (displayName || profileUser.username || '?')
+        .split(' ')
+        .map((w) => w[0])
+        .join('')
+        .slice(0, 2)
+        .toUpperCase();
+
     return (
-        <div className="profile-container">
-            <h2 className="profile-title">Profilim</h2>
-            <div className="profile-info">
-                <p><strong>Kullanıcı Adı:</strong> {profileUser.username}</p>
-                <p><strong>E-posta:</strong> {profileUser.email}</p>
-            </div>
+        <div style={{ paddingTop: spacing.xl }}>
+            <div
+                style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'minmax(0, 1.2fr) minmax(0, 1.8fr)',
+                    gap: spacing.xl,
+                }}
+            >
+                <Card>
+                    <h2 style={{ marginTop: 0, marginBottom: spacing.sm }}>
+                        Profilim
+                    </h2>
+                    <p
+                        style={{
+                            margin: 0,
+                            marginBottom: spacing.md,
+                            fontSize: '0.9rem',
+                            color: colors.textMuted,
+                        }}
+                    >
+                        Hesap bilgilerin ve yazı istatistiklerin.
+                    </p>
 
-            <h3 className="my-posts-heading">Yazdıklarım</h3>
-            {userPosts.length === 0 ? (
-                <p className="no-posts-message">Henüz hiç yazı yazmadınız.</p>
-            ) : (
-                <div className="profile-post-list">
-                    {userPosts.map((post) => (
-                        <div key={post.id} className="profile-post-card">
-                            <Link to={`/posts/${post.id}`} className="profile-post-card-title">
-                                <h4>{post.title}</h4>
-                            </Link>
-                            <p className={`profile-post-status ${post.published ? '' : 'draft'}`}>
-                                Durum: {post.published ? 'Yayınlandı' : 'Taslak'}
-                            </p>
-                            <p className="profile-post-card-date">
-                                Oluşturulma: {new Date(post.created_at).toLocaleDateString()}
-                                {post.updated_at && new Date(post.updated_at).getTime() !== new Date(post.created_at).getTime() && (
-                                    <span> (Son Güncelleme: {new Date(post.updated_at).toLocaleDateString()})</span>
-                                )}
-                            </p>
-
-                            <div className="profile-post-actions">
-                                <button
-                                    onClick={() => handleEditPost(post.id)}
-                                    className="action-button edit-button"
-                                    aria-label="Yazıyı Düzenle"
-                                    title="Yazıyı Düzenle"
+                    <div
+                        style={{
+                            display: 'flex',
+                            gap: spacing.lg,
+                            marginTop: spacing.lg,
+                            alignItems: 'center',
+                        }}
+                    >
+                        <div
+                            style={{
+                                flexShrink: 0,
+                                width: 72,
+                                height: 72,
+                                borderRadius: '50%',
+                                backgroundColor: '#020617',
+                                border: `1px solid ${colors.borderSubtle}`,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: '1.2rem',
+                                fontWeight: 600,
+                                overflow: 'hidden',
+                            }}
+                        >
+                            {profileUser.avatar_url ? (
+                                <img
+                                    src={profileUser.avatar_url}
+                                    alt={displayName}
+                                    style={{
+                                        width: '100%',
+                                        height: '100%',
+                                        objectFit: 'cover',
+                                        display: 'block',
+                                    }}
+                                />
+                            ) : (
+                                <span>{initials}</span>
+                            )}
+                        </div>
+                        <div
+                            style={{
+                                flex: 1,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: spacing.xs,
+                            }}
+                        >
+                            <div>
+                                <div
+                                    style={{
+                                        fontSize: '0.95rem',
+                                        fontWeight: 500,
+                                    }}
                                 >
-                                    <FontAwesomeIcon icon={faEdit} />
-                                </button>
-                                <button
-                                    onClick={() => handleDeletePost(post.id)}
-                                    className="action-button delete-button"
-                                    aria-label="Yazıyı Sil"
-                                    title="Yazıyı Sil"
+                                    {displayName}
+                                </div>
+                                <div
+                                    style={{
+                                        fontSize: '0.8rem',
+                                        color: colors.textMuted,
+                                    }}
                                 >
-                                    <FontAwesomeIcon icon={faTrashAlt} />
-                                </button>
+                                    @{profileUser.username}
+                                </div>
+                            </div>
+                            <div
+                                style={{
+                                    fontSize: '0.85rem',
+                                    color: colors.textMuted,
+                                }}
+                            >
+                                {profileUser.bio ||
+                                    'Henüz bir bio eklemedin. Kendini kısaca tanıtabilirsin.'}
                             </div>
                         </div>
-                    ))}
+                    </div>
+
+                    <div
+                        style={{
+                            display: 'flex',
+                            gap: spacing.md,
+                            marginTop: spacing.lg,
+                            fontSize: '0.85rem',
+                        }}
+                    >
+                        <div
+                            style={{
+                                flex: 1,
+                                padding: spacing.sm,
+                                borderRadius: 10,
+                                border: `1px solid ${colors.borderSubtle}`,
+                                backgroundColor: '#020617',
+                            }}
+                        >
+                            <div
+                                style={{
+                                    fontSize: '0.75rem',
+                                    color: colors.textMuted,
+                                }}
+                            >
+                                Toplam yazı
+                            </div>
+                            <div style={{ fontSize: '1rem' }}>
+                                {stats.totalPosts}
+                            </div>
+                        </div>
+                        <div
+                            style={{
+                                flex: 1,
+                                padding: spacing.sm,
+                                borderRadius: 10,
+                                border: `1px solid ${colors.borderSubtle}`,
+                                backgroundColor: '#020617',
+                            }}
+                        >
+                            <div
+                                style={{
+                                    fontSize: '0.75rem',
+                                    color: colors.textMuted,
+                                }}
+                            >
+                                Yayınlanan
+                            </div>
+                            <div style={{ fontSize: '1rem' }}>
+                                {stats.publishedPosts}
+                            </div>
+                        </div>
+                        <div
+                            style={{
+                                flex: 1,
+                                padding: spacing.sm,
+                                borderRadius: 10,
+                                border: `1px solid ${colors.borderSubtle}`,
+                                backgroundColor: '#020617',
+                            }}
+                        >
+                            <div
+                                style={{
+                                    fontSize: '0.75rem',
+                                    color: colors.textMuted,
+                                }}
+                            >
+                                Taslak
+                            </div>
+                            <div style={{ fontSize: '1rem' }}>
+                                {stats.draftPosts}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style={{ marginTop: spacing.xl }}>
+                        <Button
+                            variant="secondary"
+                            fullWidth
+                            onClick={() => navigate('/create-post')}
+                        >
+                            Yeni yazı oluştur
+                        </Button>
+                        {/* İleri faz: Profili düzenle formu için sadece UI taslağı */}
+                        <Button
+                            variant="ghost"
+                            fullWidth
+                            style={{ marginTop: spacing.sm, fontSize: '0.8rem' }}
+                            type="button"
+                        >
+                            Profili düzenle
+                        </Button>
+                    </div>
+                </Card>
+
+                <div>
+                    <div
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            marginBottom: spacing.md,
+                        }}
+                    >
+                        <h3 style={{ margin: 0 }}>Yazdıklarım</h3>
+                        <div
+                            style={{
+                                display: 'flex',
+                                gap: spacing.sm,
+                                fontSize: '0.8rem',
+                            }}
+                        >
+                            {[
+                                { id: 'all', label: 'Tümü' },
+                                { id: 'published', label: 'Yayınlanan' },
+                                { id: 'draft', label: 'Taslak' },
+                            ].map((f) => (
+                                <button
+                                    key={f.id}
+                                    type="button"
+                                    onClick={() => setFilter(f.id)}
+                                    style={{
+                                        padding: '4px 10px',
+                                        borderRadius: 9999,
+                                        border:
+                                            filter === f.id
+                                                ? `1px solid ${colors.primary}`
+                                                : `1px solid ${colors.borderSubtle}`,
+                                        backgroundColor:
+                                            filter === f.id
+                                                ? colors.primarySoft
+                                                : 'transparent',
+                                        color: colors.textPrimary,
+                                        cursor: 'pointer',
+                                    }}
+                                >
+                                    {f.label}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {userPosts.length === 0 ? (
+                        <Card>
+                            <p
+                                style={{
+                                    margin: 0,
+                                    color: colors.textMuted,
+                                }}
+                            >
+                                Henüz hiç yazı yazmadın. Başlamak için sağdaki
+                                \"Yeni yazı oluştur\" butonunu kullanabilirsin.
+                            </p>
+                        </Card>
+                    ) : filteredPosts.length === 0 ? (
+                        <Card>
+                            <p
+                                style={{
+                                    margin: 0,
+                                    color: colors.textMuted,
+                                }}
+                            >
+                                Bu filtre için gösterilecek yazı yok.
+                            </p>
+                        </Card>
+                    ) : (
+                        <div
+                            style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: spacing.md,
+                            }}
+                        >
+                            {filteredPosts.map((post) => (
+                                <Card
+                                    key={post.id}
+                                    style={{
+                                        padding: spacing.lg,
+                                    }}
+                                >
+                                    <div
+                                        style={{
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'flex-start',
+                                            gap: spacing.lg,
+                                        }}
+                                    >
+                                        <div style={{ flex: 1 }}>
+                                            <Link
+                                                to={`/posts/${post.id}`}
+                                                style={{
+                                                    textDecoration: 'none',
+                                                }}
+                                            >
+                                                <h4
+                                                    style={{
+                                                        margin: 0,
+                                                        marginBottom:
+                                                            spacing.xs,
+                                                    }}
+                                                >
+                                                    {post.title}
+                                                </h4>
+                                            </Link>
+                                            <p
+                                                style={{
+                                                    margin: 0,
+                                                    marginBottom: spacing.xs,
+                                                    fontSize: '0.8rem',
+                                                    color: colors.textMuted,
+                                                }}
+                                            >
+                                                Durum:{' '}
+                                                <span
+                                                    style={{
+                                                        color:
+                                                            post.status ===
+                                                            'published'
+                                                                ? colors.success
+                                                                : colors.textMuted,
+                                                    }}
+                                                >
+                                                    {post.status === 'published'
+                                                        ? 'Yayınlandı'
+                                                        : 'Taslak'}
+                                                </span>
+                                            </p>
+                                            <p
+                                                style={{
+                                                    margin: 0,
+                                                    fontSize: '0.8rem',
+                                                    color: colors.textMuted,
+                                                }}
+                                            >
+                                                Oluşturulma:{' '}
+                                                {new Date(
+                                                    post.created_at,
+                                                ).toLocaleDateString()}
+                                                {post.updated_at &&
+                                                    new Date(
+                                                        post.updated_at,
+                                                    ).getTime() !==
+                                                        new Date(
+                                                            post.created_at,
+                                                        ).getTime() && (
+                                                        <span>
+                                                            {' '}
+                                                            (Son
+                                                            güncelleme:{' '}
+                                                            {new Date(
+                                                                post.updated_at,
+                                                            ).toLocaleDateString()}
+                                                            )
+                                                        </span>
+                                                    )}
+                                            </p>
+                                        </div>
+                                        <div
+                                            style={{
+                                                display: 'flex',
+                                                flexDirection: 'row',
+                                                gap: spacing.sm,
+                                            }}
+                                        >
+                                            <Button
+                                                variant="secondary"
+                                                onClick={() =>
+                                                    handleEditPost(post.id)
+                                                }
+                                                title="Yazıyı düzenle"
+                                            >
+                                                <FontAwesomeIcon icon={faEdit} />
+                                            </Button>
+                                            <Button
+                                                variant="danger"
+                                                onClick={() =>
+                                                    handleDeletePost(post.id)
+                                                }
+                                                title="Yazıyı sil"
+                                            >
+                                                <FontAwesomeIcon
+                                                    icon={faTrashAlt}
+                                                />
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </Card>
+                            ))}
+                        </div>
+                    )}
                 </div>
-            )}
+            </div>
         </div>
     );
 }
